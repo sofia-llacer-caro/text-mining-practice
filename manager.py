@@ -20,7 +20,6 @@ from config import FILE, STOP_WORDS, BAG_OF_WORDS
 def preprocessing() -> str:
     '''
     Preprocesses a .txt file and applies case normalization for later use in text mining tasks
-    :file: .txt file in directory /sample_texts relative to main.py
     '''
     file = FILE
     raw_content = open(file, 'r', encoding="utf8").read()     # Added encoding to ensure spanish characters identified
