@@ -15,7 +15,7 @@ import string
 import sklearn
 import sys
 from config import FILE, STOP_WORDS, BAG_OF_WORDS
-# from bs4 import BeautifulSoup     # this library is giving problems
+# from bs4 import BeautifulSoup     # this library is giving me problems
 
 def preprocessing() -> str:
     '''
