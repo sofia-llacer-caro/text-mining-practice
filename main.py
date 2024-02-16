@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-
 from manager import preprocessing
 
 def main():

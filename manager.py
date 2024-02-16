@@ -10,71 +10,50 @@
 
 import pandas as pd
 import re
+import unicodedata
 import string
 import sklearn
+import sys
 from config import FILE, STOP_WORDS, BAG_OF_WORDS
 # from bs4 import BeautifulSoup     # this library is giving problems
 
-def preprocessing(file) -> str:
+def preprocessing() -> str:
     '''
     Preprocesses a .txt file and applies case normalization for later use in text mining tasks
     :file: .txt file in directory /sample_texts relative to main.py
     '''
     file = FILE
-    content = open(file, 'r', encoding="utf8") # Added encoding to ensure spanish characters identified
+    raw_content = open(file, 'r', encoding="utf8").read()     # Added encoding to ensure spanish characters identified
 
     stop_words = STOP_WORDS
 
+    # Make all text lowercase
+    t1 = raw_content.lower() # lowercase
+    
+    # Remove punctuation.Used custom punctuation based on unicode instead of using method string.punctuation.
+    # This is because the latter is ASCII, which doesn't include spanish punctuation sign ¡
+    punctuation = "".join((chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith('P')))
+    t2 = t1.translate(str.maketrans('', '', punctuation))  
+    
+    # Remove numbers
+    t3 = re.sub(r'\d+', '', t2)
 
+    # Remove white space
+    t4 = t3.strip()
 
-    content.lower() # lowercase
-    re.sub(r'\d+', '', content) # remove numbers
-    content.translate(string.maketrans("",""), string.punctuation) # remove a set of punctuation symbols
-    content = content.strip() # removes white space
+    # Remove mentions
+    t5 = re.sub("@\S+", "", t4)
 
-    # removing stopwords
-    text = " ".join([word for word in text.split() if word not in stop_words]) # stop_words to be made
+    # Remove links
+    t6 = re.sub("https?:\/\/.*[\r\n]*", "", t5)
 
-    # Removing URLs, Hashtags, Punctuation, Mentions, etc
+    # Remove hashtags
+    t7 = re.sub("#", "", t6)
 
-    # removing mentions
+    # Remove tickers
+    t8 = re.sub("\$", "", t7)
 
-    text = "You should get @BlockFiZac from @BlockFi to talk about bitcoin lending, stablecoins, institution adoption, and the future of crypto"
+    # Remove stopwords
+    clean_text = " ".join([word for word in t8.split() if word not in stop_words])
 
-    text = re.sub("@\S+", "", text)
-    # remove tickers
-
-    text = """#BITCOIN LOVES MARCH 13th A year ago the price of Bitcoin collapsed to $3,800 one of the lowest levels in the last 4 years. Today, exactly one year later it reaches the new all-time high of $60,000 Thank you Bitcoin for always making my birthday exciting"""
-
-    text = re.sub("\$", "", text)
-    print(text)
-
-    #Output: #BITCOIN LOVES MARCH 13th A year ago the price of Bitcoin collapsed to  3,800 one of the lowest levels in the last 4 years. Today, exactly one year  later it reaches the new all-time high of 60,000 Thank you Bitcoin for  always making my birthday exciting
-
-    # remove urls
-
-
-    text = "Did someone just say “Feature Engineering”? https://buff.ly/3rRzL0s"
-
-    text = re.sub("https?:\/\/.*[\r\n]*", "", text)
-    print(text)
-
-    # Output: Did someone just say “Feature Engineering”?
-
-    # removing hashtags
-
-    text = """.#FreedomofExpression which includes #FreedomToProtest should be the cornerstone of any democracy. I’m looking forward to speaking in the 2 day debate on the #PoliceCrackdownBill & explaining why I will be voting against it."""
-
-
-    text = re.sub("#", "", text)
-    print(text)
-
-
-    #Output: FreedomofExpression which includes FreedomToProtest should be the  cornerstone of any democracy. I’m looking forward to speaking in the 2 day  debate on the PoliceCrackdownBill & explaining why I will be voting against it.
-
-
-
-
-
-
-    return content
+    return clean_text
