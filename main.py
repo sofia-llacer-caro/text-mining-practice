@@ -3,7 +3,9 @@
 from manager import preprocessing
 
 def main():
-    # here goes what needs to be done
+    # 1. 
+    # 2. 
+    # 3. 
     result = preprocessing()
     return result
 
