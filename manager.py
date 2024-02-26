@@ -14,12 +14,23 @@ import unicodedata
 import string
 import sklearn
 import sys
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
-import textmining
+
 
 from config import FILE, STOP_WORDS, BAG_OF_WORDS
 # from bs4 import BeautifulSoup     # this library is giving me problems
+
+
+def read(file):
+    text = open(input, 'r', encoding="utf8").read()     # Added encoding to ensure spanish characters identified (in case needed)
+    return text
+
+def into_corpus(text):
+    document = []
+    corpus = []
+    for i in range(document):
+        corpus.append(document[i])
+    return corpus
+
 
 def preprocessing() -> str:
     '''
@@ -60,12 +71,4 @@ def preprocessing() -> str:
     clean_text = " ".join([word for word in t8.split() if word not in stop_words])
 
     return clean_text
-
-
-def visualize(text):
-    wordcloud = WordCloud(max_font_size=50, max_words=100, background_color="white").generate(text)
-    plt.figure()
-    plt.imshow(wordcloud, interpolation="bilinear")
-    plt.axis("off")
-    plt.show()
 
