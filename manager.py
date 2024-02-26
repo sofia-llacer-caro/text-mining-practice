@@ -1,12 +1,4 @@
-#THE IDEA IS TO MAKE A PREPROCESSING FUNCTION LIBRARY
-
-#reading from text file with soup package
-#create funciton that is preprocess(file) an it should do everything in the clearning thing
-
-
 #!/usr/bin/python
-
-
 
 import pandas as pd
 import re
@@ -14,21 +6,37 @@ import unicodedata
 import string
 import sklearn
 import sys
-
-
 from config import FILE, STOP_WORDS, BAG_OF_WORDS
-# from bs4 import BeautifulSoup     # this library is giving me problems
 
 
-def read(file):
-    text = open(input, 'r', encoding="utf8").read()     # Added encoding to ensure spanish characters identified (in case needed)
-    return text
+def read_document(document:str) -> str: 
+    '''
+    Takes in the location of a .txt file, returns the contents of a .txt file into a string.
+    :input: document; .txt file to be read
+    :output: data; contents of the .txt file
+    '''
+    try:
+        with open(document, 'r') as f:
+            data = f.read()
+        return data
+      
+    except IOError:
+        print("Error opening or reading input file: ", document)
+        sys.exit()
 
-def into_corpus(text):
+
+def reformatting(text:str) -> list:
+    '''
+    Reformats a text into documents and a corpus for later text mining use
+    :input: text; full text in string type
+    :output: document; each of the documents or "sentences" that the text has been divided onto
+    :output: corpus; ensemble of documents in the corpus list object
+    '''
     document = []
     corpus = []
-    for i in range(document):
-        corpus.append(document[i])
+    lines = text.splitlines() #  Here we consider different lines to be each of the documents, as we're dealing with tweets
+    for line in lines:
+        document.append(line)
     return corpus
 
 
