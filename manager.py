@@ -19,7 +19,10 @@ def read_file(file:str) -> list:
     try:
         with open(file, 'r', encoding="utf8") as f:
             documents = f.readlines()
-        return documents
+            raw_corpus = [] # Initialize corpus
+            for document in documents:
+                raw_corpus.append(document.strip())
+        return documents, raw_corpus
       
     except IOError:
         print("Error opening or reading input file: ", file)
