@@ -6,28 +6,33 @@ import unicodedata
 import string
 import sklearn
 import sys
+import spacy
 from config import FILE, STOP_WORDS, BAG_OF_WORDS
 
 
-def read_file(file:str) -> list: 
+def read_file(file: str) -> str: 
     '''
-    Takes in the location of a .txt file, returns the contents of a .txt file into a string.
-    Structures the contents into documents and a corpus
+    Takes in the location of a .txt file, returns the contents of a .txt file as a string.
     :input: file; .txt file to be read
-    :output: documents; list where each of the elements are the documents as extracted from the file
+    :output: file_contents; contents of the file as a string
     '''
     try:
         with open(file, 'r', encoding="utf8") as f:
-            documents = f.readlines()
-            raw_corpus = [] # Initialize corpus
-            for document in documents:
-                raw_corpus.append(document.strip())
-        return documents, raw_corpus
+            file_contents = f.read()
+        return file_contents
       
     except IOError:
         print("Error opening or reading input file: ", file)
         sys.exit()
 
+
+
+
+def split_into_documents(text):
+    sentence_delimiters = r'[.!?]'
+    sentences = re.split(sentence_delimiters, text)
+    sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
+    return sentences
 
 
 def preprocess(text:str) -> str:
@@ -74,3 +79,14 @@ def preprocess(text:str) -> str:
 
     return doc
 
+def tokenization(text):
+    nlp = spacy.load('en_core_web_sm')
+    print("Creating a text object with nlp")
+    text = nlp(u'Google is looking at buying U.S. startup for $6 million')
+
+    print("Printing each token separately")
+    for token in text:
+        print(token.text, token.pos_, token.dep_)
+
+
+    print("Tokenization")
