@@ -14,13 +14,61 @@
 
 import nltk
 import pandas as pd 
+import numpy as np
 
-nltk.download('vader_lexicon')
+#nltk.download('vader_lexicon') #UNCOMMENT WHEN UPLOAD
 
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 
-# 1. group by product
+# 1. Group by product
+
+raw_df = pd.read_csv("reviews.csv")
+products = pd.unique(raw_df["id"]) # See how many different products there are, which is 65
+
+contents = {
+    'product': products,
+    'avg_rating': np.zeros(len(products)),
+    'num_ratings': np.zeros(len(products))
+}
+
+df = pd.DataFrame(contents) # Create final df for later analysis
+
+
+
+# 2. Calculate average rating per product
+
+mean = [] # Initialize
+query = list(products)
+raw_df_product = pd.DataFrame(raw_df)
+
+for i in range(len(products)):
+    query[i] = f"id=='{products[i]}'"
+    raw_df_product = raw_df.query(query[i])
+    mean_df = raw_df_product["reviews.rating"].mean()
+    mean.append(mean_df)
+
+df['avg_rating'] = mean
+
+
+# 3. Count Number of ratings
+
+
+
+# 4. "Do Recommend" Score
+
+
+# 5. Sentiment Analysis
+
+
+
+
+
+
+
+
+
+
 # 2. extract reviews.text, reviews.title
 # 3. preprocess (remove stopwords)
 # 4. extract sentiment
