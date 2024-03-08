@@ -93,6 +93,7 @@ def opinion(text):
     return 2#,output['neu']
 
 # Usage
+#COMMENTED COS IT TAKES V LONG
 '''
 for i in range(len(products)):
     review_sent = []
