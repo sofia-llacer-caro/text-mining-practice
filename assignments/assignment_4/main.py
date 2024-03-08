@@ -93,24 +93,7 @@ def opinion(text):
     return 2#,output['neu']
 
 # Usage
-
 '''
-sentiment_values = [] # 0 Negative; 1 Positive; 2 Neutral
-query = list(products)
-raw_df_product = pd.DataFrame(raw_df)
-
-for i in range(len(products)):
-    query[i] = f"id=='{products[i]}'"
-    raw_df_product = raw_df.query(query[i])
-    print(raw_df_product["reviews.text"].loc[i])
-    #sentiment_values_df = opinion(raw_df_product["reviews.text"].loc[i])
-    #sentiment_values.append(sentiment_values_df)
-
-df['sentiment_key'] = sentiment_values
-
-print(df)
-'''
-
 for i in range(len(products)):
     review_sent = []
     query[i] = f"id=='{products[i]}'"
@@ -133,11 +116,34 @@ for i in range(len(products)):
     df['percent_pos'][i] = percent_pos
     df['percent_neu'][i] = percent_neu
 
+
+
 print(df)
+'''
 
+# 6. Season sales analysis
+winter_count = [] # Initialize
+query = list(products)
+raw_df_product = pd.DataFrame(raw_df)
+months = [10, 12, 1, 2]
 
+# WORKS WITH OCTOBER BUT NOT IF OCTOBER IS NOT INCLUDED
 
+for i in range(len(products)):
+    counter = 0
+    for j in range(rating_count[i]):
+        
+        datetime_str = raw_df_product['dateAdded'][i]
+        datetime_obj = pd.to_datetime(datetime_str)
+        month_purchase = datetime_obj.month
+            
+        if month_purchase in months:
+            counter+=1
+        else:
+            pass
+    winter_count.append(counter)
 
+print(winter_count)
 
 
 
