@@ -12,6 +12,11 @@
 
 # Polarity classification - Opinion Mining - Sentiment Analysis
 
+import warnings
+
+warnings.simplefilter(action='ignore') # Due to method depracated in future versions, makes results more legible
+
+
 import nltk
 import pandas as pd 
 import numpy as np
@@ -29,7 +34,10 @@ products = pd.unique(raw_df["id"]) # See how many different products there are, 
 contents = {
     'product': products,
     'avg_rating': np.zeros(len(products)),
-    'num_ratings': np.zeros(len(products))
+    'num_ratings': np.zeros(len(products)),
+    'percent_neg': np.zeros(len(products)),
+    'percent_pos': np.zeros(len(products)),
+    'percent_neu': np.zeros(len(products))
 }
 
 df = pd.DataFrame(contents) # Create final df for later analysis
@@ -51,14 +59,88 @@ for i in range(len(products)):
 df['avg_rating'] = mean
 
 
+
 # 3. Count Number of ratings
 
+rating_count = [] # Initialize
+query = list(products)
+raw_df_product = pd.DataFrame(raw_df)
+
+for i in range(len(products)):
+    query[i] = f"id=='{products[i]}'"
+    raw_df_product = raw_df.query(query[i])
+    rating_count_df = raw_df_product["reviews.rating"].count()
+    rating_count.append(rating_count_df)
+
+df['num_ratings'] = rating_count
 
 
-# 4. "Do Recommend" Score
+
+# 4. "Do Recommend" Score: we wanted to add and has potential but that field is not filled up in the raw data
+
 
 
 # 5. Sentiment Analysis
+
+def opinion(text):
+    vader_analyzer = SentimentIntensityAnalyzer()
+    output =vader_analyzer.polarity_scores(text)
+
+    if output['neg']>0.3:
+        return 0#,output['neg']
+    elif  output['pos']>0.3:
+        return 1#,output['pos']
+    return 2#,output['neu']
+
+# Usage
+
+'''
+sentiment_values = [] # 0 Negative; 1 Positive; 2 Neutral
+query = list(products)
+raw_df_product = pd.DataFrame(raw_df)
+
+for i in range(len(products)):
+    query[i] = f"id=='{products[i]}'"
+    raw_df_product = raw_df.query(query[i])
+    print(raw_df_product["reviews.text"].loc[i])
+    #sentiment_values_df = opinion(raw_df_product["reviews.text"].loc[i])
+    #sentiment_values.append(sentiment_values_df)
+
+df['sentiment_key'] = sentiment_values
+
+print(df)
+'''
+
+for i in range(len(products)):
+    review_sent = []
+    query[i] = f"id=='{products[i]}'"
+    raw_df_product = raw_df.query(query[i])
+    for j in range(rating_count[i]): # Evaluate each review individually and obtain its sentiment key
+        sent = opinion(raw_df["reviews.text"][j])
+        review_sent.append(sent)
+    review_df = pd.DataFrame({'review_score': review_sent})
+    
+    # Absolute count of reviews
+    num_neg_rev = review_df[review_df['review_score'] == 0].count()
+    num_pos_rev = review_df[review_df['review_score'] == 1].count()
+    num_neu_rev = review_df[review_df['review_score'] == 2].count()
+    # Relative occurences
+    percent_neg = num_neg_rev/rating_count[i]
+    percent_pos = num_pos_rev/rating_count[i]
+    percent_neu = num_neu_rev/rating_count[i]
+    # Add to main dataframe
+    df['percent_neg'][i] = percent_neg
+    df['percent_pos'][i] = percent_pos
+    df['percent_neu'][i] = percent_neu
+
+print(df)
+
+
+
+
+
+
+
 
 
 
