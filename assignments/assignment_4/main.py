@@ -93,8 +93,7 @@ def opinion(text):
     return 2#,output['neu']
 
 # Usage
-#COMMENTED COS IT TAKES V LONG
-'''
+
 for i in range(len(products)):
     review_sent = []
     query[i] = f"id=='{products[i]}'"
@@ -118,48 +117,36 @@ for i in range(len(products)):
     df['percent_neu'][i] = percent_neu
 
 
-
-print(df)
-'''
-
 # 6. Season sales analysis
-winter_count = [] # Initialize
+winter = []
 query = list(products)
 raw_df_product = pd.DataFrame(raw_df)
-months = [10, 12, 1, 2]
+months = [11, 12, 1, 2]
 
-# WORKS WITH OCTOBER BUT NOT IF OCTOBER IS NOT INCLUDED
+for i in range(len(raw_df)):
+
+    datetime_str = raw_df['dateAdded'][i]
+    datetime_obj = pd.to_datetime(datetime_str)
+    month_purchase = datetime_obj.month
+
+    if month_purchase in months:
+        raw_df.loc[i, "Winter"] = 1
+    else:
+        raw_df.loc[i, "Winter"] = 0
+    
 
 for i in range(len(products)):
-    counter = 0
-    for j in range(rating_count[i]):
-        
-        datetime_str = raw_df_product['dateAdded'][i]
-        datetime_obj = pd.to_datetime(datetime_str)
-        month_purchase = datetime_obj.month
-            
-        if month_purchase in months:
-            counter+=1
-        else:
-            pass
-    winter_count.append(counter)
+    query[i] = f"id=='{products[i]}'"
+    raw_df_product = raw_df.query(query[i])
+    winter_df = raw_df_product[raw_df_product["Winter"] == 1]["Winter"].count()
+    winter.append(winter_df)
 
-print(winter_count)
+winter_per = []
+for i in range(len(products)):
+    # Relative occurence
+    percent_winter = winter[i]/rating_count[i]
+    # Add to main dataframe
+    winter_per.append(percent_winter)
+df['percent_winter'] = winter_per
 
-
-
-
-
-
-
-
-
-
-
-
-
-# 2. extract reviews.text, reviews.title
-# 3. preprocess (remove stopwords)
-# 4. extract sentiment
-# 5. classify opinion
-# 6. construct dataframe with product id, sentiment, opinion + [whatever we want to use later, n.reviews, doRecommend...]
+df.to_csv('processed_data.csv', index=False)
