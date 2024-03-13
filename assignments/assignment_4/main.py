@@ -8,14 +8,8 @@
 # In list of opinion O how many quintuples have positive sentiment s?
 
 # ----------------------------
-# do sentiment analysis: reviews.text,reviews.title
-
-# Polarity classification - Opinion Mining - Sentiment Analysis
-
 import warnings
-
 warnings.simplefilter(action='ignore') # Due to method depracated in future versions, makes results more legible
-
 
 import nltk
 import pandas as pd 
