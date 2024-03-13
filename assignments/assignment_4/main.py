@@ -149,4 +149,7 @@ for i in range(len(products)):
     winter_per.append(percent_winter)
 df['percent_winter'] = winter_per
 
+# Add the product name for clarity in the data for analysis
+df['product_name'] = raw_df['name']
+
 df.to_csv('processed_data.csv', index=False)
